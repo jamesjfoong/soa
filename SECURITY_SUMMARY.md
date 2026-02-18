@@ -59,7 +59,7 @@ Updated `package.json` with the following changes:
     "express": "^4.19.2",      // was: ^4.17.1
     "jsonwebtoken": "^9.0.0",  // was: ^8.5.1
     "moment": "^2.29.2",       // was: ^2.29.1
-    "multer": "^1.4.5-lts.2"   // was: ^1.4.2
+    "multer": "^2.0.2"          // was: ^1.4.2
   }
 }
 ```
@@ -100,10 +100,27 @@ axios.get(url)  // Fully backward compatible
 
 Axios 1.x maintains backward compatibility for simple HTTP requests.
 
-### multer 1.4.2 → 1.4.5-lts.2
-**Status**: ✅ No code changes required
+### multer 1.4.2 → 2.0.2
+**Status**: ✅ Fixed callback bug in fileName function
 
-**Reason**: LTS version maintains API compatibility while patching security vulnerabilities.
+**Reason**: Multer 2.x resolves multiple DoS vulnerabilities:
+- Denial of Service via unhandled exception from malformed request
+- Denial of Service via unhandled exception
+- Denial of Service from maliciously crafted requests
+- Denial of Service via memory leaks from unclosed streams
+
+**Breaking Changes**: 
+- API is largely backward compatible
+- Fixed existing bug: `callback` → `cb` in fileName function (line 42 of routes/users.js)
+
+**Code Changes Required**: 
+```javascript
+// Before (bug):
+return callback(new Error("Only images are allowed"));
+
+// After (fixed):
+return cb(new Error("Only images are allowed"));
+```
 
 ### express 4.17.1 → 4.19.2
 **Status**: ✅ No code changes required
@@ -115,11 +132,20 @@ Axios 1.x maintains backward compatibility for simple HTTP requests.
 
 **Reason**: jQuery 3.x maintains backward compatibility across minor versions.
 
-## Handling dicer Vulnerability
-**Issue**: `dicer <= 0.3.1` has CVE with no patch in the original package
-**Solution**: ✅ Upgraded to `multer@1.4.5-lts.2` which uses a patched version of busboy/dicer
-**Alternative considered**: multer@2.x (rejected due to breaking changes)
-**Status**: Vulnerability resolved without breaking changes
+## Handling dicer/busboy/multer Vulnerabilities
+**Issue**: 
+- `dicer <= 0.3.1` has CVE with no patch in the original package
+- `multer 1.4.x` has multiple DoS vulnerabilities
+- `multer 1.4.5-lts.2` still vulnerable to DoS attacks
+
+**Solution**: ✅ Upgraded to `multer@2.0.2` which fully resolves all vulnerabilities:
+- Fixes dicer/busboy transitive vulnerabilities
+- Resolves DoS via unhandled exceptions
+- Resolves DoS from malformed/malicious requests
+- Resolves DoS via memory leaks
+
+**Code Changes Required**: Fixed existing callback bug in fileName function
+**Status**: All vulnerabilities resolved
 
 ## Testing Results
 

@@ -39,7 +39,7 @@ const upload = multer({
                     extension !== "gif" &&
                     extension !== "jpeg"
                 ) {
-                    return callback(new Error("Only images are allowed"));
+                    return cb(new Error("Only images are allowed"));
                 }
                 filename =
                     crypto.randomBytes(20).toString("hex") + "." + extension;

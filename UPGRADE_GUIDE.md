@@ -46,7 +46,7 @@ Replace the dependencies section in `package.json` with:
   "jsonwebtoken": "^9.0.0",
   "moment": "^2.29.2",
   "morgan": "^1.10.0",
-  "multer": "^1.4.5-lts.2",
+  "multer": "^2.0.2",
   "multer-google-drive": "^1.0.3",
   "mysql": "^2.18.1",
   "serve-favicon": "^2.5.0"
@@ -241,27 +241,45 @@ jQuery 3.x maintains strict backward compatibility.
 
 **Only file reference change required** (already documented in Step 3).
 
-## Handling dicer Dependency (≤ 0.3.1)
+## Handling dicer/busboy/multer Dependencies
 
 ### The Problem
 - `dicer` package has vulnerability with no fix in original package
 - It's a transitive dependency of `busboy` → `multer`
-- Suggested fix: upgrade to `multer@2.x` (major breaking change)
+- `multer 1.4.x` has multiple DoS vulnerabilities:
+  - Denial of Service via unhandled exception from malformed request
+  - Denial of Service via unhandled exception
+  - Denial of Service from maliciously crafted requests
+  - Denial of Service via memory leaks from unclosed streams
 
 ### Our Solution ✅
-Upgrade to `multer@1.4.5-lts.2` which:
-- Maintains multer 1.x API compatibility
+Upgrade to `multer@2.0.2` which:
+- Fully resolves all DoS vulnerabilities
 - Uses patched versions of busboy/dicer
-- Resolves the security vulnerability
-- Requires zero code changes
+- Maintains API compatibility for our use case
+- Requires one minor bug fix in existing code
+
+### Code Change Required
+Fixed existing bug in `routes/users.js` (line 42):
+
+**Before:**
+```javascript
+return callback(new Error("Only images are allowed"));
+```
+
+**After:**
+```javascript
+return cb(new Error("Only images are allowed"));
+```
+
+This was an existing bug where the wrong callback variable name was used.
 
 ### Alternative Options (Not Chosen)
-1. **multer@2.x**: Would require code changes for API breaking changes
+1. **multer@1.4.5-lts.2**: Still has DoS vulnerabilities
 2. **Alternative library**: Would require rewriting file upload logic
-3. **Suppress warning**: Would leave vulnerability unpatched
 
 ### Decision
-✅ Use `multer@1.4.5-lts.2` - provides security fix without breaking changes.
+✅ Use `multer@2.0.2` - provides complete security fix with minimal changes.
 
 ## Recommended Testing Plan
 
