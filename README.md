@@ -82,30 +82,6 @@ This is an example of how to list things you need to use the software and how to
     npm install
     ```
 
-## Security
-
-This project maintains high security standards with all dependencies kept up-to-date and vulnerabilities addressed promptly.
-
-### Current Security Status
-- ✅ **0 npm vulnerabilities** (verified via `npm audit`)
-- ✅ All Dependabot alerts resolved
-- ✅ Dependencies upgraded to secure versions
-
-### Key Security Updates (2026-02-18)
-- **axios**: Upgraded to v1.13.5 (resolves multiple CVEs)
-- **crypto-js**: Upgraded to v4.2.0 (CVE-2023-46233)
-- **ejs**: Upgraded to v3.1.7 (CVE-2022-29078)
-- **express**: Upgraded to v4.19.2 (CVE-2024-29041)
-- **jsonwebtoken**: Upgraded to v9.0.0 (CVE-2022-23539)
-- **jQuery**: Upgraded to v3.7.1 (CVE-2019-11358)
-
-For detailed security information, see:
-- [SECURITY_SUMMARY.md](./SECURITY_SUMMARY.md) - Complete vulnerability resolution report
-- [UPGRADE_GUIDE.md](./UPGRADE_GUIDE.md) - Step-by-step upgrade instructions
-
-### Reporting Security Issues
-If you discover a security vulnerability, please report it via GitHub Security Advisories or contact the maintainers directly.
-
 ## Contributing
 
 Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**. List of all people that contribute to this project :
